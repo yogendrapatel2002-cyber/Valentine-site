@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Be My Valentine</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      font-family: 'Cursive', sans-serif;
+      text-align: center;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 3em;
+      color: #fff;
+      text-shadow: 2px 2px #ff4d6d;
+    }
+    .buttons {
+      margin-top: 30px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      margin: 10px;
+      transition: 0.3s;
+      position: relative;
+    }
+    .yes {
+      background: #ff4d6d;
+      color: white;
+    }
+    .no {
+      background: #fff;
+      color: #ff4d6d;
+    }
+    #secret {
+      display: none;
+      margin-top: 20px;
+      font-size: 1.5em;
+      color: #fff;
+    }
+    #slideshow {
+      display: none;
+      margin-top: 20px;
+    }
+    #slideshow img {
+      width: 300px;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 0 10px #ff4d6d;
+    }
+    #loveLetter {
+      display: none;
+      margin-top: 20px;
+      max-width: 500px;
+      background: rgba(255,255,255,0.8);
+      padding: 20px;
+      border-radius: 15px;
+      font-family: 'Georgia', serif;
+      color: #ff4d6d;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>💖 Will you be my Valentine? 💖</h1>
+  <div class="buttons">
+    <button class="yes" onclick="sayYes()">Yes</button>
+    <button class="no" onclick="moveNo(this)">No</button>
+  </div>
+
+  <div id="secret">🔐 Secret Message: You are my forever Valentine 💌</div>
+
+  <div id="slideshow">
+    <img id="slide" src="https://placekitten.com/300/200" alt="Memory">
+  </div>
+
+  <div id="loveLetter"></div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    // Confetti + hearts
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      let particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 100,
+          color: `hsl(${Math.random()*360},100%,70%)`,
+          heart: Math.random() > 0.5
+        });
+      }
+      function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p => {
+          ctx.fillStyle = p.color;
+          if (p.heart) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.bezierCurveTo(p.x-10, p.y-10, p.x-20, p.y+10, p.x, p.y+20);
+            ctx.bezierCurveTo(p.x+20, p.y+10, p.x+10, p.y-10, p.x, p.y);
+            ctx.fill();
+          } else {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+            ctx.fill();
+          }
+          p.y += 2;
+          if (p.y > canvas.height) p.y = -10;
+        });
+      }
+      setInterval(draw, 30);
+    }
+
+    // Yes button actions
+    function sayYes() {
+      alert('Yay! You said YES! 🎉💘');
+      launchConfetti();
+      document.getElementById('secret').style.display = 'block';
+      document.getElementById('slideshow').style.display = 'block';
+      document.getElementById('loveLetter').style.display = 'block';
+      writeLoveLetter("Priya"); // Replace with her name
+      startSlideshow();
+    }
+
+    // No button moves randomly
+    function moveNo(btn) {
+      btn.style.position = "absolute";
+      btn.style.left = Math.random() * (window.innerWidth - 100) + "px";
+      btn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+    }
+
+    // Slideshow
+    const images = [
+      "https://placekitten.com/300/200",
+      "https://placebear.com/300/200",
+      "https://picsum.photos/300/200"
+    ];
+    let index = 0;
+    function startSlideshow() {
+      setInterval(() => {
+        index = (index+1) % images.length;
+        document.getElementById('slide').src = images[index];
+      }, 2000);
+    }
+
+    // AI-written love letter (simple generator)
+    function writeLoveLetter(name) {
+      const text = `
+        My dearest ${name},<br><br>
+        From the moment I met you, my world has been brighter. 
+        Every smile you share is a melody, every glance a poem. 
+        On this Valentine’s Day, I want you to know that my heart 
+        belongs to you, today and always.<br><br>
+        Yours forever,<br>💖
+      `;
+      document.getElementById('loveLetter').innerHTML = text;
+    }
+  </script>
+</body>
+</html>
